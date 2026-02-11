@@ -63,7 +63,7 @@ EOT
     name                = string
     resource_group_name = string
     target_resource_id  = string
-    enabled             = optional(bool, true)
+    enabled             = optional(bool) # Default: true
     tags                = optional(map(string))
     profile = list(object({
       capacity = object({
@@ -74,14 +74,14 @@ EOT
       fixed_date = optional(object({
         end      = string
         start    = string
-        timezone = optional(string, "UTC")
+        timezone = optional(string) # Default: "UTC"
       }))
       name = string
       recurrence = optional(object({
         days     = list(string)
         hours    = list(number)
         minutes  = list(number)
-        timezone = optional(string, "UTC")
+        timezone = optional(string) # Default: "UTC"
       }))
       rule = optional(list(object({
         metric_trigger = object({
@@ -112,8 +112,8 @@ EOT
     notification = optional(object({
       email = optional(object({
         custom_emails                         = optional(list(string))
-        send_to_subscription_administrator    = optional(bool, false)
-        send_to_subscription_co_administrator = optional(bool, false)
+        send_to_subscription_administrator    = optional(bool) # Default: false
+        send_to_subscription_co_administrator = optional(bool) # Default: false
       }))
       webhook = optional(object({
         properties  = optional(map(string))
@@ -136,7 +136,7 @@ EOT
   validation {
     condition = alltrue([
       for k, v in var.monitor_autoscale_settings : (
-        v.profile == null || alltrue([for item in v.profile : (item.rule == null || (length(item.rule) <= 10))])
+        alltrue([for item in v.profile : (item.rule == null || (length(item.rule) <= 10))])
       )
     ])
     error_message = "Each rule list must contain at most 10 items"
