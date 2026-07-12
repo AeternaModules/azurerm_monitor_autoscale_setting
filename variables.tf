@@ -85,11 +85,11 @@ EOT
       }))
       rule = optional(list(object({
         metric_trigger = object({
-          dimensions = optional(object({
+          dimensions = optional(list(object({
             name     = string
             operator = string
             values   = list(string)
-          }))
+          })))
           divide_by_instance_count = optional(bool)
           metric_name              = string
           metric_namespace         = optional(string)
@@ -115,10 +115,10 @@ EOT
         send_to_subscription_administrator    = optional(bool) # Default: false
         send_to_subscription_co_administrator = optional(bool) # Default: false
       }))
-      webhook = optional(object({
+      webhook = optional(list(object({
         properties  = optional(map(string))
         service_uri = string
-      }))
+      })))
     }))
     predictive = optional(object({
       look_ahead_time = optional(string)
@@ -141,34 +141,13 @@ EOT
     ])
     error_message = "Each rule list must contain at most 10 items"
   }
-  validation {
-    condition = alltrue([
-      for k, v in var.monitor_autoscale_settings : (
-        length(v.name) > 0
-      )
-    ])
-    error_message = "must not be empty"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.monitor_autoscale_settings : (
-        v.notification == null || (v.notification.email == null || (v.notification.email.custom_emails == null || (length(v.notification.email.custom_emails) > 0)))
-      )
-    ])
-    error_message = "must not be empty"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.monitor_autoscale_settings : (
-        v.notification == null || (v.notification.webhook == null || (length(v.notification.webhook.service_uri) > 0))
-      )
-    ])
-    error_message = "must not be empty"
-  }
   # --- Unconfirmed validation candidates, derived from azurerm_monitor_autoscale_setting's provider source ---
   # Not auto-enabled: either a bespoke provider validator we can't safely translate,
   # or a path that crosses a list-typed block (needs its own for_each wrapping).
   # Review, translate into a real validation{} block above, and delete once confirmed.
+  # path: name
+  #   condition: length(value) > 0
+  #   message:   must not be empty
   # path: resource_group_name
   #   condition: length(value) <= 90
   #   message:   [from resourcegroups.ValidateName: invalid when len(value) > 90]
@@ -261,6 +240,12 @@ EOT
   # path: profile.recurrence.minutes[*]
   #   condition: value >= 0 && value <= 59
   #   message:   must be between 0 and 59
+  # path: notification.email.custom_emails[*]
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: notification.webhook.service_uri
+  #   condition: length(value) > 0
+  #   message:   must not be empty
   # path: tags
   #   condition: length(value) <= 50
   #   message:   [from tags.Validate: invalid when len(value) > 50]

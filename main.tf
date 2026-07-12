@@ -39,7 +39,7 @@ resource "azurerm_monitor_autoscale_setting" "monitor_autoscale_settings" {
         content {
           metric_trigger {
             dynamic "dimensions" {
-              for_each = rule.value.metric_trigger.dimensions != null ? [rule.value.metric_trigger.dimensions] : []
+              for_each = rule.value.metric_trigger.dimensions != null ? rule.value.metric_trigger.dimensions : []
               content {
                 name     = dimensions.value.name
                 operator = dimensions.value.operator
@@ -80,7 +80,7 @@ resource "azurerm_monitor_autoscale_setting" "monitor_autoscale_settings" {
         }
       }
       dynamic "webhook" {
-        for_each = notification.value.webhook != null ? [notification.value.webhook] : []
+        for_each = notification.value.webhook != null ? notification.value.webhook : []
         content {
           properties  = webhook.value.properties
           service_uri = webhook.value.service_uri
