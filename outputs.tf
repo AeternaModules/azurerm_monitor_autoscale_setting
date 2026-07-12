@@ -1,3 +1,7 @@
+output "monitor_autoscale_settings_id" {
+  description = "Map of id values across all monitor_autoscale_settings, keyed the same as var.monitor_autoscale_settings"
+  value       = { for k, v in azurerm_monitor_autoscale_setting.monitor_autoscale_settings : k => v.id }
+}
 output "monitor_autoscale_settings_enabled" {
   description = "Map of enabled values across all monitor_autoscale_settings, keyed the same as var.monitor_autoscale_settings"
   value       = { for k, v in azurerm_monitor_autoscale_setting.monitor_autoscale_settings : k => v.enabled }
