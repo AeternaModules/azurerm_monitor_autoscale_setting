@@ -141,128 +141,158 @@ EOT
     ])
     error_message = "Each rule list must contain at most 10 items"
   }
-  # --- Unconfirmed validation candidates, derived from azurerm_monitor_autoscale_setting's provider source ---
-  # Not auto-enabled: either a bespoke provider validator we can't safely translate,
-  # or a path that crosses a list-typed block (needs its own for_each wrapping).
-  # Review, translate into a real validation{} block above, and delete once confirmed.
-  # path: name
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: resource_group_name
-  #   condition: length(value) <= 90
-  #   message:   [from resourcegroups.ValidateName: invalid when len(value) > 90]
-  #   source:    [from resourcegroups.ValidateName: invalid when len(value) > 90]
-  # path: resource_group_name
-  #   condition: !endswith(value, ".")
-  #   message:   [from resourcegroups.ValidateName: must not end with "."]
-  #   source:    [from resourcegroups.ValidateName: must not end with "."]
-  # path: resource_group_name
-  #   condition: length(value) != 0
-  #   message:   [from resourcegroups.ValidateName: invalid when len(value) == 0]
-  #   source:    [from resourcegroups.ValidateName: invalid when len(value) == 0]
-  # path: resource_group_name
-  #   source:    [from resourcegroups.ValidateName] !matched
-  # path: location
-  #   source:    location.EnhancedValidate: no recognizable `if ... { errors = append(...) }` pattern - read it by hand
-  # path: target_resource_id
-  #   source:    [from azure.ValidateResourceID] !ok
-  # path: target_resource_id
-  #   source:    [from azure.ValidateResourceID] err != nil
-  # path: predictive.scale_mode
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: predictive.look_ahead_time
-  #   source:    validate.ISO8601DurationBetween: no recognizable `if ... { errors = append(...) }` pattern - read it by hand
-  # path: profile.name
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: profile.capacity.minimum
-  #   condition: value >= 0 && value <= 1000
-  #   message:   must be between 0 and 1000
-  # path: profile.capacity.maximum
-  #   condition: value >= 0 && value <= 1000
-  #   message:   must be between 0 and 1000
-  # path: profile.capacity.default
-  #   condition: value >= 0 && value <= 1000
-  #   message:   must be between 0 and 1000
-  # path: profile.rule.metric_trigger.metric_name
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: profile.rule.metric_trigger.metric_resource_id
-  #   source:    [from azure.ValidateResourceID] !ok
-  # path: profile.rule.metric_trigger.metric_resource_id
-  #   source:    [from azure.ValidateResourceID] err != nil
-  # path: profile.rule.metric_trigger.time_grain
-  #   source:    [from validate.ISO8601Duration] !ok
-  # path: profile.rule.metric_trigger.time_grain
-  #   source:    [from validate.ISO8601Duration] err != nil
-  # path: profile.rule.metric_trigger.statistic
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: profile.rule.metric_trigger.time_window
-  #   source:    [from validate.ISO8601Duration] !ok
-  # path: profile.rule.metric_trigger.time_window
-  #   source:    [from validate.ISO8601Duration] err != nil
-  # path: profile.rule.metric_trigger.time_aggregation
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: profile.rule.metric_trigger.operator
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: profile.rule.metric_trigger.metric_namespace
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: profile.rule.metric_trigger.dimensions.name
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: profile.rule.metric_trigger.dimensions.operator
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: profile.rule.metric_trigger.dimensions.values[*]
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: profile.rule.scale_action.direction
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: profile.rule.scale_action.type
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: profile.rule.scale_action.value
-  #   condition: value >= 0
-  #   message:   must be at least 0
-  # path: profile.rule.scale_action.cooldown
-  #   source:    [from validate.ISO8601Duration] !ok
-  # path: profile.rule.scale_action.cooldown
-  #   source:    [from validate.ISO8601Duration] err != nil
-  # path: profile.fixed_date.timezone
-  #   source:    validateAutoScaleSettingsTimeZone: no recognizable `if ... { errors = append(...) }` pattern - read it by hand
-  # path: profile.fixed_date.start
-  #   source:    validation.IsRFC3339Time(...) - no translation rule yet, add one
-  # path: profile.fixed_date.end
-  #   source:    validation.IsRFC3339Time(...) - no translation rule yet, add one
-  # path: profile.recurrence.timezone
-  #   source:    validateAutoScaleSettingsTimeZone: no recognizable `if ... { errors = append(...) }` pattern - read it by hand
-  # path: profile.recurrence.days[*]
-  #   condition: contains(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"], value)
-  #   message:   must be one of: Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday
-  # path: profile.recurrence.hours[*]
-  #   condition: value >= 0 && value <= 23
-  #   message:   must be between 0 and 23
-  # path: profile.recurrence.minutes[*]
-  #   condition: value >= 0 && value <= 59
-  #   message:   must be between 0 and 59
-  # path: notification.email.custom_emails[*]
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: notification.webhook.service_uri
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: tags
-  #   condition: length(value) <= 50
-  #   message:   [from tags.Validate: invalid when len(value) > 50]
-  #   source:    [from tags.Validate: invalid when len(value) > 50]
-  # path: tags
-  #   condition: length(value) <= 512
-  #   message:   [from tags.Validate: invalid when len(value) > 512]
-  #   source:    [from tags.Validate: invalid when len(value) > 512]
-  # path: tags
-  #   source:    [from tags.Validate] err != nil
-  # path: tags
-  #   condition: length(value) <= 256
-  #   message:   [from tags.Validate: invalid when len(value) > 256]
-  #   source:    [from tags.Validate: invalid when len(value) > 256]
+  validation {
+    condition = alltrue([
+      for k, v in var.monitor_autoscale_settings : (
+        length(v.name) > 0
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.monitor_autoscale_settings : (
+        length(v.resource_group_name) <= 90
+      )
+    ])
+    error_message = "[from resourcegroups.ValidateName: invalid when len(value) > 90]"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.monitor_autoscale_settings : (
+        !endswith(v.resource_group_name, ".")
+      )
+    ])
+    error_message = "[from resourcegroups.ValidateName: must not end with \".\"]"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.monitor_autoscale_settings : (
+        length(v.resource_group_name) != 0
+      )
+    ])
+    error_message = "[from resourcegroups.ValidateName: invalid when len(value) == 0]"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.monitor_autoscale_settings : (
+        alltrue([for item in v.profile : (length(item.name) > 0)])
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.monitor_autoscale_settings : (
+        alltrue([for item in v.profile : (item.capacity.minimum >= 0 && item.capacity.minimum <= 1000)])
+      )
+    ])
+    error_message = "must be between 0 and 1000"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.monitor_autoscale_settings : (
+        alltrue([for item in v.profile : (item.capacity.maximum >= 0 && item.capacity.maximum <= 1000)])
+      )
+    ])
+    error_message = "must be between 0 and 1000"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.monitor_autoscale_settings : (
+        alltrue([for item in v.profile : (item.capacity.default >= 0 && item.capacity.default <= 1000)])
+      )
+    ])
+    error_message = "must be between 0 and 1000"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.monitor_autoscale_settings : (
+        alltrue([for item in v.profile : (item.rule == null || alltrue([for item in item.rule : (length(item.metric_trigger.metric_name) > 0)]))])
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.monitor_autoscale_settings : (
+        alltrue([for item in v.profile : (item.rule == null || alltrue([for item in item.rule : (item.metric_trigger.metric_namespace == null || (length(item.metric_trigger.metric_namespace) > 0))]))])
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.monitor_autoscale_settings : (
+        alltrue([for item in v.profile : (item.rule == null || alltrue([for item in item.rule : (item.metric_trigger.dimensions == null || alltrue([for item in item.metric_trigger.dimensions : (length(item.name) > 0)]))]))])
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.monitor_autoscale_settings : (
+        alltrue([for item in v.profile : (item.rule == null || alltrue([for item in item.rule : (item.metric_trigger.dimensions == null || alltrue([for item in item.metric_trigger.dimensions : (alltrue([for x in item.values : length(x) > 0]))]))]))])
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.monitor_autoscale_settings : (
+        alltrue([for item in v.profile : (item.rule == null || alltrue([for item in item.rule : (item.scale_action.value >= 0)]))])
+      )
+    ])
+    error_message = "must be at least 0"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.monitor_autoscale_settings : (
+        alltrue([for item in v.profile : (item.recurrence == null || (alltrue([for x in item.recurrence.days : contains(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"], x)])))])
+      )
+    ])
+    error_message = "must be one of: Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.monitor_autoscale_settings : (
+        alltrue([for item in v.profile : (item.recurrence == null || (alltrue([for x in item.recurrence.hours : x >= 0 && x <= 23])))])
+      )
+    ])
+    error_message = "must be between 0 and 23"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.monitor_autoscale_settings : (
+        alltrue([for item in v.profile : (item.recurrence == null || (alltrue([for x in item.recurrence.minutes : x >= 0 && x <= 59])))])
+      )
+    ])
+    error_message = "must be between 0 and 59"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.monitor_autoscale_settings : (
+        v.notification == null || (v.notification.email == null || (v.notification.email.custom_emails == null || (alltrue([for x in v.notification.email.custom_emails : length(x) > 0]))))
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.monitor_autoscale_settings : (
+        v.notification == null || (v.notification.webhook == null || alltrue([for item in v.notification.webhook : (length(item.service_uri) > 0)]))
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.monitor_autoscale_settings : (
+        v.tags == null || (length(v.tags) <= 50)
+      )
+    ])
+    error_message = "[from tags.Validate: invalid when len(value) > 50]"
+  }
+  # Note: 27 additional provider-side validators are enforced at apply time but not mirrored as validation{} blocks here (bespoke or non-mechanically-translatable).
 }
 
