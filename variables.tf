@@ -63,7 +63,7 @@ EOT
     name                = string
     resource_group_name = string
     target_resource_id  = string
-    enabled             = optional(bool) # Default: true
+    enabled             = optional(bool)
     tags                = optional(map(string))
     profile = list(object({
       capacity = object({
@@ -74,14 +74,14 @@ EOT
       fixed_date = optional(object({
         end      = string
         start    = string
-        timezone = optional(string) # Default: "UTC"
+        timezone = optional(string)
       }))
       name = string
       recurrence = optional(object({
         days     = list(string)
         hours    = list(number)
         minutes  = list(number)
-        timezone = optional(string) # Default: "UTC"
+        timezone = optional(string)
       }))
       rule = optional(list(object({
         metric_trigger = object({
@@ -112,8 +112,8 @@ EOT
     notification = optional(object({
       email = optional(object({
         custom_emails                         = optional(list(string))
-        send_to_subscription_administrator    = optional(bool) # Default: false
-        send_to_subscription_co_administrator = optional(bool) # Default: false
+        send_to_subscription_administrator    = optional(bool)
+        send_to_subscription_co_administrator = optional(bool)
       }))
       webhook = optional(list(object({
         properties  = optional(map(string))
@@ -128,10 +128,10 @@ EOT
   validation {
     condition = alltrue([
       for k, v in var.monitor_autoscale_settings : (
-        length(v.profile) <= 20
+        length(v.profile) >= 1 && length(v.profile) <= 20
       )
     ])
-    error_message = "Each profile list must contain at most 20 items"
+    error_message = "Each profile list must contain between 1 and 20 items"
   }
   validation {
     condition = alltrue([
@@ -227,10 +227,14 @@ EOT
   #   source:    [from validate.ISO8601Duration] !ok
   # path: profile.rule.scale_action.cooldown
   #   source:    [from validate.ISO8601Duration] err != nil
+  # path: profile.fixed_date.timezone
+  #   source:    validateAutoScaleSettingsTimeZone: no recognizable `if ... { errors = append(...) }` pattern - read it by hand
   # path: profile.fixed_date.start
   #   source:    validation.IsRFC3339Time(...) - no translation rule yet, add one
   # path: profile.fixed_date.end
   #   source:    validation.IsRFC3339Time(...) - no translation rule yet, add one
+  # path: profile.recurrence.timezone
+  #   source:    validateAutoScaleSettingsTimeZone: no recognizable `if ... { errors = append(...) }` pattern - read it by hand
   # path: profile.recurrence.days[*]
   #   condition: contains(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"], value)
   #   message:   must be one of: Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday
