@@ -16,11 +16,11 @@ output "monitor_autoscale_settings_name" {
 }
 output "monitor_autoscale_settings_notification" {
   description = "Map of notification values across all monitor_autoscale_settings, keyed the same as var.monitor_autoscale_settings"
-  value       = { for k, v in azurerm_monitor_autoscale_setting.monitor_autoscale_settings : k => v.notification if v.notification != null && length(v.notification) > 0 }
+  value       = { for k, v in azurerm_monitor_autoscale_setting.monitor_autoscale_settings : k => one(v.notification) if v.notification != null && length(v.notification) > 0 }
 }
 output "monitor_autoscale_settings_predictive" {
   description = "Map of predictive values across all monitor_autoscale_settings, keyed the same as var.monitor_autoscale_settings"
-  value       = { for k, v in azurerm_monitor_autoscale_setting.monitor_autoscale_settings : k => v.predictive if v.predictive != null && length(v.predictive) > 0 }
+  value       = { for k, v in azurerm_monitor_autoscale_setting.monitor_autoscale_settings : k => one(v.predictive) if v.predictive != null && length(v.predictive) > 0 }
 }
 output "monitor_autoscale_settings_profile" {
   description = "Map of profile values across all monitor_autoscale_settings, keyed the same as var.monitor_autoscale_settings"
